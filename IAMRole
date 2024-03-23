@@ -1,0 +1,26 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_iam_role" "example_role" {
+  name               = var.role_name
+  assume_role_policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect"    : "Allow",
+        "Principal" : {
+          "Service" : "ec2.amazonaws.com"
+        },
+        "Action"    : "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_group_membership" "example_group_membership" {
+  name     = var.group_name
+  users    = [] # Add users if required
+  groups   = [aws_iam_group.example_group.name]
+  role     = aws_iam_role.example_role.name
+}
